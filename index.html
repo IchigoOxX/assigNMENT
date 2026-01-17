@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP FICO Assignments - SAP FI Training</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* RTL Support */
+        [lang="ar"] {
+            direction: rtl;
+        }
+
+        [lang="ar"] .sidebar {
+            left: auto;
+            right: 1rem;
+            transform: translateX(calc(100% + 2rem));
+        }
+
+        [lang="ar"] .sidebar.open {
+            transform: translateX(0);
+        }
+
+        /* Language toggle - English default */
+        .en-only {
+            /* Default - no change needed */
+            visibility: visible;
+        }
+
+        .ar-only {
+            display: none !important;
+        }
+
+        /* Arabic mode - hide English, show Arabic */
+        [lang="ar"] .en-only {
+            display: none !important;
+        }
+
+        [lang="ar"] .ar-only {
+            display: block !important;
+        }
+
+        /* For inline elements like span */
+        span.ar-only {
+            display: none !important;
+        }
+
+        [lang="ar"] span.ar-only {
+            display: inline !important;
+        }
+
+        [lang="ar"] span.en-only {
+            display: none !important;
+        }
+
+        /* For list items */
+        li.ar-only {
+            display: none !important;
+        }
+
+        [lang="ar"] li.ar-only {
+            display: block !important;
+        }
+
+        [lang="ar"] li.en-only {
+            display: none !important;
+        }
+
+        /* For menu/anchor links */
+        a.ar-only {
+            display: none !important;
+        }
+
+        [lang="ar"] a.ar-only {
+            display: block !important;
+        }
+
+        [lang="ar"] a.en-only {
+            display: none !important;
+        }
+
+        /* For div elements */
+        div.ar-only {
+            display: none !important;
+        }
+
+        [lang="ar"] div.ar-only {
+            display: block !important;
+        }
+
+        [lang="ar"] div.en-only {
+            display: none !important;
+        }
+
+        /* For paragraphs and headings */
+        p.ar-only,
+        h1.ar-only,
+        h2.ar-only,
+        h3.ar-only,
+        h4.ar-only {
+            display: none !important;
+        }
+
+        [lang="ar"] p.ar-only,
+        [lang="ar"] h1.ar-only,
+        [lang="ar"] h2.ar-only,
+        [lang="ar"] h3.ar-only,
+        [lang="ar"] h4.ar-only {
+            display: block !important;
+        }
+
+        [lang="ar"] p.en-only,
+        [lang="ar"] h1.en-only,
+        [lang="ar"] h2.en-only,
+        [lang="ar"] h3.en-only,
+        [lang="ar"] h4.en-only {
+            display: none !important;
+        }
+
+        /* RTL: Ensure same visual appearance as English */
+        [lang="ar"] .cards-grid {
+            direction: rtl;
+        }
+
+        [lang="ar"] .minimized-card {
+            direction: rtl;
+        }
+
+        [lang="ar"] .min-title {
+            text-align: center;
+        }
+
+        [lang="ar"] .section-header {
+            direction: rtl;
+        }
+
+        [lang="ar"] .assignment-card {
+            direction: rtl;
+        }
+
+        [lang="ar"] table th,
+        [lang="ar"] table td {
+            text-align: right;
+        }
+
+        [lang="ar"] table th:last-child,
+        [lang="ar"] table td:last-child {
+            text-align: center;
+        }
+
+        /* Assignment Card - STATIC */
+        .assignment-card {
+            background: rgba(20, 100, 90, 0.3);
+            border: 1px solid rgba(45, 212, 191, 0.2);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: none !important;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            display: none;
+            /* HIDDEN BY DEFAULT */
+        }
+
+        .assignment-card:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .cards-grid .assignment-wrapper:hover {
+            transform: none !important;
+            margin: 0 -25px !important;
+            z-index: 1 !important;
+            transition: none !important;
+        }
+
+        /* Detail Sections */
+        .assignment-details {
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(45, 212, 191, 0.2);
+            padding-top: 1.5rem;
+        }
+
+        .details-title {
+            color: #2dd4bf;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .details-list {
+            list-style: none;
+            padding: 0;
+            counter-reset: detail-step;
+        }
+
+        .details-list li {
+            display: block;
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 0.8rem;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .details-list li::before {
+            counter-increment: detail-step;
+            content: counter(detail-step);
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 20px;
+            height: 20px;
+            background: rgba(45, 212, 191, 0.2);
+            color: #2dd4bf;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* RTL support for lists */
+        [lang="ar"] .details-list li {
+            /* display: block !important;  <-- REMOVED to prevent showing hidden items */
+            padding-left: 0;
+            padding-right: 35px;
+        }
+
+        [lang="ar"] .details-list li.en-only {
+            display: none !important;
+        }
+
+        [lang="ar"] .details-list li::before {
+            left: auto;
+            right: 0;
+        }
+
+        [lang="ar"] .step-header {
+            flex-direction: row-reverse;
+        }
+
+        [lang="ar"] .assign-tabs {
+            flex-direction: row-reverse;
+        }
+
+        /* RTL: Fix content layout for Arabic */
+        [lang="ar"] .assignment-details {
+            display: block;
+            width: 100%;
+        }
+
+        [lang="ar"] .step-content {
+            text-align: right;
+        }
+
+        /* Fix Step Number Alignment in Arabic */
+        [lang="ar"] .step-number.ar-only {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            margin-left: 1.5rem;
+            margin-right: 0;
+            font-weight: 700;
+            padding-top: 4px;
+            /* Slight optical adjustment for Arabic text */
+        }
+
+        [lang="ar"] .details-title {
+            text-align: right;
+        }
+
+        /* RTL: Fix sidebar menu - items should be stacked */
+        [lang="ar"] .menu-item {
+            display: block !important;
+            text-align: right;
+        }
+
+        [lang="ar"] .menu-section {
+            display: block;
+        }
+
+        [lang="ar"] .menu-title {
+            text-align: right;
+        }
+
+        /* RTL: Fix images grid */
+        [lang="ar"] .images-grid {
+            direction: rtl;
+        }
+
+        /* RTL: Video container */
+        [lang="ar"] video {
+            direction: ltr;
+        }
+
+        /* Tabs */
+        .assign-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(45, 212, 191, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .assign-tab-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .assign-tab-btn.active {
+            background: rgba(45, 212, 191, 0.15);
+            color: #2dd4bf;
+        }
+
+        .assign-content-block {
+            display: none;
+        }
+
+        .assign-content-block.active {
+            display: block;
+        }
+
+        .assignment-card .step-number {
+            background: rgba(45, 212, 191, 0.2);
+            color: #2dd4bf;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+
+    <!-- Assignment Scripts -->
+    <script src="sections/assignment-1.js"></script>
+    <script src="sections/assignment-2.js"></script>
+</head>
+
+<body>
+    <!-- Particle Background -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar Menu -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div>
+                <div class="sidebar-logo">SAP FICO</div>
+                <div class="sidebar-subtitle en-only">Assignments</div>
+                <div class="sidebar-subtitle ar-only">التمارين</div>
+            </div>
+            <button class="sidebar-close" onclick="toggleSidebar()">×</button>
+        </div>
+
+        <div class="menu-section">
+            <div class="menu-title en-only">Assignments</div>
+            <div class="menu-title ar-only">التمارين</div>
+            <a href="#assignment-1" class="menu-item en-only" onclick="toggleSidebar()">1. GL & FIORI Creation</a>
+            <a href="#assignment-1" class="menu-item ar-only" onclick="toggleSidebar()">1. إنشاء GL و FIORI</a>
+            <a href="#assignment-2" class="menu-item en-only" onclick="toggleSidebar()">2. GL Document Transactions</a>
+            <a href="#assignment-2" class="menu-item ar-only" onclick="toggleSidebar()">2. معاملات مستندات GL</a>
+            <a href="#assignment-3" class="menu-item en-only" onclick="toggleSidebar()">3. Vendor & Posting
+                Documents</a>
+            <a href="#assignment-3" class="menu-item ar-only" onclick="toggleSidebar()">3. الموردين وترحيل المستندات</a>
+            <a href="#assignment-4" class="menu-item en-only" onclick="toggleSidebar()">4. Accounts Payable (AP)</a>
+            <a href="#assignment-4" class="menu-item ar-only" onclick="toggleSidebar()">4. حسابات الدائنين</a>
+        </div>
+    </aside>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <button class="menu-toggle" onclick="toggleSidebar()">
+                <div class="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <span class="menu-text">MENU</span>
+            </button>
+            <div class="brand-container" style="display: flex; gap: 2rem; align-items: center;">
+                <img src="images/logo eui.svg" alt="EUI Logo" style="height: 50px;">
+                <img src="images/depiEN.png" alt="DEPI Logo" style="height: 50px;">
+                <img src="images/MCEN.webp" alt="MCEN Logo" style="height: 50px;">
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Mode">🌙</button>
+            <button class="lang-switcher" onclick="toggleLanguage()">العربية</button>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1 class="hero-title">
+            <span class="gradient-text en-only">SAP FI Training</span>
+            <span class="gradient-text ar-only">تدريب SAP FI</span>
+        </h1>
+        <p class="hero-subtitle en-only">Practical Assignments for SAP FICO Configuration</p>
+        <p class="hero-subtitle ar-only">تمارين عملية لتكوين SAP FICO</p>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="sections-container" id="sectionsContainer">
+            <!-- Assignments will be injected here -->
+        </div>
+    </main>
+
+    <footer class="main-footer"
+        style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.6); font-family: 'Inter', sans-serif; position: relative; z-index: 10;">
+        <div class="en-only">Powered by Omar Ramadan</div>
+        <div class="ar-only">Powered by Omar Ramadan</div>
+    </footer>
+
+    <!-- Assignment Scripts -->
+    <script src="sections/assignment-1.js"></script>
+    <script src="sections/assignment-2.js"></script>
+    <script src="sections/assignment-3.js"></script>
+    <script src="sections/assignment-4.js"></script>
+
+    <script>
+        // Initialize content on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('sectionsContainer');
+            let cardsHtml = '';
+            if (typeof assignment1Content !== 'undefined') cardsHtml += assignment1Content;
+            if (typeof assignment2Content !== 'undefined') cardsHtml += assignment2Content;
+            if (typeof assignment3Content !== 'undefined') cardsHtml += assignment3Content;
+            if (typeof assignment4Content !== 'undefined') cardsHtml += assignment4Content;
+
+            // Wrap in section with cards-grid for side-by-side layout
+            const html = `
+                <section class="section" id="assignments-section">
+                    <div class="section-header">
+                        <div class="section-number en-only">Practical Assignments</div>
+                        <div class="section-number ar-only">التمارين العملية</div>
+                        <h2 class="section-title">
+                            <span class="gradient-text en-only">SAP FICO Training Tasks</span>
+                            <span class="gradient-text ar-only">مهام تدريب SAP FICO</span>
+                        </h2>
+                        <p class="section-desc en-only">Complete the following assignments to practice GL configuration</p>
+                        <p class="section-desc ar-only">أكمل التمارين التالية للتدرب على إعدادات الأستاذ العام</p>
+                    </div>
+                    <div class="cards-grid">
+                        ${cardsHtml}
+                    </div>
+                </section>
+            `;
+            container.innerHTML = html;
+            initParticles();
+            animate();
+        });
+
+        // Tab switching
+        function switchAssignTab(tabId) {
+            const targetBlock = document.getElementById(tabId);
+            if (!targetBlock) return;
+            const card = targetBlock.closest('.assignment-card');
+            if (!card) return;
+            card.querySelectorAll('.assign-tab-btn').forEach(btn => btn.classList.remove('active'));
+            card.querySelectorAll('.assign-content-block').forEach(block => block.classList.remove('active'));
+            const tabBtn = card.querySelector(`.assign-tab-btn[onclick*="${tabId}"]`);
+            if (tabBtn) tabBtn.classList.add('active');
+            targetBlock.classList.add('active');
+        }
+
+        // Card minimize/restore
+        function minimizeCard(btn) {
+            const wrapper = btn.closest('.card-wrapper');
+            if (!wrapper) return;
+            const card = wrapper.querySelector('.config-card');
+            const mini = wrapper.querySelector('.minimized-card');
+            if (card) card.style.display = 'none';
+            if (mini) mini.style.display = 'flex';
+            wrapper.classList.remove('expanded');
+        }
+        function restoreCard(miniCard) {
+            const wrapper = miniCard.closest('.card-wrapper');
+            if (!wrapper) return;
+            const card = wrapper.querySelector('.config-card');
+            const mini = wrapper.querySelector('.minimized-card');
+            if (card) card.style.display = 'block';
+            if (mini) mini.style.display = 'none';
+            wrapper.classList.add('expanded');
+            // Auto-scroll to show card from the top (with header visible)
+            setTimeout(() => {
+                const headerOffset = 80; // Header height offset
+                const cardTop = card.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+                window.scrollTo({ top: cardTop, behavior: 'smooth' });
+            }, 100);
+        }
+
+        // Sidebar toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+
+        // Language toggle with RTL
+        function toggleLanguage() {
+            const html = document.documentElement;
+            const isArabic = html.lang === 'ar';
+            html.lang = isArabic ? 'en' : 'ar';
+            document.querySelector('.lang-switcher').textContent = isArabic ? 'العربية' : 'English';
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isDark = html.dataset.theme !== 'light';
+            html.dataset.theme = isDark ? 'light' : 'dark';
+            document.querySelector('.theme-toggle').textContent = isDark ? '☀️' : '🌙';
+            updateParticles(isDark ? 'light' : 'dark');
+        }
+
+        // Modal
+        function openModal(imgSrc) { window.open(imgSrc, '_blank'); }
+
+        /* ===== PARTICLE BACKGROUND WITH MOUSE INTERACTION ===== */
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+        let mouse = { x: null, y: null };
+
+        const config = {
+            particleCount: 80,
+            connectionDistance: 150,
+            baseSpeed: 0.5,
+            colors: ['rgba(255, 255, 255, 0.8)', 'rgba(151, 125, 189, 0.8)', 'rgba(100, 200, 255, 0.8)'],
+            connectionColor: 'rgba(151, 125, 189,'
+        };
+
+        const themeColors = {
+            dark: { particles: ['rgba(255,255,255,0.8)', 'rgba(151,125,189,0.8)', 'rgba(100,200,255,0.8)'], connection: 'rgba(151,125,189,' },
+            light: { particles: ['rgba(17,18,29,0.6)', 'rgba(111,66,193,0.6)', 'rgba(214,51,132,0.6)'], connection: 'rgba(111,66,193,' }
+        };
+
+        function updateParticles(theme) {
+            const colors = themeColors[theme] || themeColors.dark;
+            config.colors = colors.particles;
+            config.connectionColor = colors.connection;
+            if (particles.length > 0) {
+                particles.forEach(p => { p.color = config.colors[Math.floor(Math.random() * config.colors.length)]; });
+            }
+        }
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+        window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+
+        class Particle {
+            constructor() { this.init(); }
+            init() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * config.baseSpeed;
+                this.vy = (Math.random() - 0.5) * config.baseSpeed;
+                this.size = Math.random() * 2 + 1;
+                this.color = config.colors[Math.floor(Math.random() * config.colors.length)];
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                // Mouse Repulsion
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    const maxDistance = 200;
+                    if (distance < maxDistance) {
+                        const force = (maxDistance - distance) / maxDistance;
+                        this.x -= (dx / distance) * force * 2;
+                        this.y -= (dy / distance) * force * 2;
+                    }
+                }
+                // Screen Wrap
+                if (this.x < 0) this.x = width;
+                if (this.x > width) this.x = 0;
+                if (this.y < 0) this.y = height;
+                if (this.y > height) this.y = 0;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            updateParticles(currentTheme);
+            particles = [];
+            for (let i = 0; i < config.particleCount; i++) { particles.push(new Particle()); }
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            connectParticles();
+        }
+
+        function connectParticles() {
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a; b < particles.length; b++) {
+                    let dx = particles[a].x - particles[b].x;
+                    let dy = particles[a].y - particles[b].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < config.connectionDistance) {
+                        let opacityValue = 1 - (distance / config.connectionDistance);
+                        ctx.beginPath();
+                        ctx.strokeStyle = config.connectionColor + opacityValue * 0.3 + ')';
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
